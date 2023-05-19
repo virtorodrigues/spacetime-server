@@ -12,7 +12,7 @@ export async function authRoutes(app: FastifyInstance) {
     const { code } = bodySchema.parse(request.body)
 
     const accessTokenResponse = await axios.post(
-      'https://github.com/login/oauth/acess_token',
+      'https://github.com/login/oauth/access_token',
       null,
       {
         params: {
@@ -63,7 +63,7 @@ export async function authRoutes(app: FastifyInstance) {
     const token = app.jwt.sign(
       {
         name: user.name,
-        avatar_url: user.avatarUrl,
+        avatarUrl: user.avatarUrl,
       },
       {
         sub: user.id,
