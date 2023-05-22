@@ -16,13 +16,11 @@ export async function memoriesRoutes(app: FastifyInstance) {
         createdAt: 'asc',
       },
     })
-    return memories.map((memory) => {
+    return memories.map((memory: any) => {
       return {
         id: memory.id,
         coverUrl: memory.coverUrl,
         createdAt: memory.createdAt,
-        isPublic: memory.isPublic,
-        content: memory.content,
         excerpt: memory.content.substring(0, 115).concat('...'),
       }
     })
