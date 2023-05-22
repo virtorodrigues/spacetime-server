@@ -7,6 +7,7 @@ import { memoriesRoutes } from './routes/memories'
 import { authRoutes } from './routes/auth'
 import { uploadRoutes } from './routes/upload'
 import { resolve } from 'node:path'
+import cors from '@fastify/cors'
 
 const app = fastify()
 
@@ -17,7 +18,7 @@ app.register(require('@fastify/static'), {
   prefix: '/uploads',
 })
 
-app.register(require('@fastify/cors'), {
+app.register(cors, {
   origin: true,
 })
 
