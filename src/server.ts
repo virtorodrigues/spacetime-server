@@ -17,10 +17,6 @@ app.register(require('@fastify/static'), {
   prefix: '/uploads',
 })
 
-app.register(require('@fastify/cors'), {
-  origin: true,
-})
-
 app.register(jwt, {
   secret: 'spacetime',
 })
