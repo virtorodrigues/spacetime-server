@@ -1,7 +1,6 @@
 import 'dotenv/config'
 
 import fastify from 'fastify'
-import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
 import { memoriesRoutes } from './routes/memories'
@@ -18,7 +17,7 @@ app.register(require('@fastify/static'), {
   prefix: '/uploads',
 })
 
-app.register(cors, {
+app.register(require('@fastify/cors'), {
   origin: true,
 })
 
