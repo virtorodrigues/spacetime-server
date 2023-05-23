@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { promisify } from 'node:util'
 import { PassThrough, pipeline, Readable } from 'node:stream'
-/*
+
 const pipelineAsync = promisify(pipeline)
 
 const storage = new Storage({
@@ -33,7 +33,7 @@ async function getBufferFromStream(stream: Readable): Promise<Buffer> {
 
   return Buffer.concat(chunks)
 }
-*/
+
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
     /* const parts = request.parts() as any
