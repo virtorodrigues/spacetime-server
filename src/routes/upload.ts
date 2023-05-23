@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { promisify } from 'node:util'
 import { PassThrough, pipeline, Readable } from 'node:stream'
-
+/*
 const pipelineAsync = promisify(pipeline)
 
 const storage = new Storage({
@@ -33,10 +33,10 @@ async function getBufferFromStream(stream: Readable): Promise<Buffer> {
 
   return Buffer.concat(chunks)
 }
-
+*/
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
-    const parts = request.parts() as any
+    /* const parts = request.parts() as any
 
     for await (const part of parts) {
       if (part.file) {
@@ -54,10 +54,10 @@ export async function uploadRoutes(app: FastifyInstance) {
         const file = bucket.file(destination)
         await file.save(fileBuffer)
 
-        const fileUrl = `https://storage.googleapis.com/${bucket.name}/${destination}`
-
-        reply.send({ success: true, fileUrl })
+        
       }
-    }
+    } */
+    const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
+    reply.send({ success: true, fileUrl })
   })
 }
