@@ -7,8 +7,18 @@ import { PassThrough, pipeline, Readable } from 'stream'
 
 const pipelineAsync = promisify(pipeline)
 
+// const keyFilename = path.join(__dirname, '/routes/google-cloud-key.json')
+
+// const storage = new Storage({
+//   keyFilename,
+// })
+
 const storage = new Storage({
-  keyFilename: path.join(__dirname, 'google-cloud-key.json'),
+  projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
+  credentials: {
+    client_email: process.env.GCLOUD_STORAGE_CLIENT_EMAIL,
+    private_key: process.env.GCLOUD_STORAGE_PRIVATE_KEY,
+  },
 })
 
 export async function uploadRoutes(app: FastifyInstance) {
