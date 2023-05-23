@@ -5,7 +5,7 @@ import path from 'path'
 
 const storage = new Storage({
   projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
-  keyFilename: path.join(__dirname, 'google-cloud-service.json'),
+  keyFilename: path.join(__dirname, '/dist/google-cloud-service.json'),
 })
 
 const bucketName = process.env.GCLOUD_STORAGE_BUCKET
