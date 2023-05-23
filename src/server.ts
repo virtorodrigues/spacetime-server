@@ -28,9 +28,7 @@ app.register(jwt, {
 })
 
 app.register(require('@fastify/http-proxy'), {
-  upstream: 'https://storage.googleapis.com',
-  prefix: '/api', // optional
-  http2: false, // optional
+  upstream: 'https://storage.googleapis.com/',
 })
 
 app.register(uploadRoutes)
