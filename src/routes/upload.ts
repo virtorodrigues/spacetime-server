@@ -40,7 +40,15 @@ export async function uploadRoutes(app: FastifyInstance) {
 
     for await (const part of parts) {
       if (part.file) {
-        const fileBuffer = await getBufferFromStream(part.file)
+        // const fileBuffer = await getBufferFromStream(part.file)
+
+        const buffers = []
+
+        for await (const chunk of part.file) {
+          buffers.push(chunk)
+        }
+
+        const fileBuffer = Buffer.concat(buffers)
 
         // Upload fileBuffer to Google Cloud Storage
         const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
