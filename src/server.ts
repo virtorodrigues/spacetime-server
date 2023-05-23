@@ -31,8 +31,8 @@ app.register(jwt, {
 app.register(require('fastify-https-redirect'))
 
 app.register(require('@fastify/http-proxy'), {
-  upstream: 'https://storage.googleapis.com',
-  prefix: '/api',
+  upstream: 'https://console.cloud.google.com/storage/browser',
+  prefix: '/spacetime-bucket',
   http2: false, // optional
 })
 
