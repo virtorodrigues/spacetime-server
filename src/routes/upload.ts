@@ -30,7 +30,10 @@ export async function uploadRoutes(app: FastifyInstance) {
     const bucket = storage.bucket(bucketName)
     const blob = bucket.file(destination)
 
-    await blob.createWriteStream().end(upload.file)
+    await blob.createWriteStream().end('dsadasd.png')
+
+    const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
+    reply.send({ success: true, fileUrl })
     /* const parts = request.parts() as any
 
     for await (const part of parts) {
