@@ -1,13 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
 import { Storage, UploadResponse } from '@google-cloud/storage'
+import path from 'path'
 
 const storage = new Storage({
   projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
-  credentials: {
-    client_email: process.env.GCLOUD_STORAGE_CLIENT_EMAIL,
-    private_key: process.env.GCLOUD_STORAGE_PRIVATE_KEY,
-  },
+  keyFilename: path.join(__dirname, '../../google-cloud-service.json'),
 })
 
 const bucketName = process.env.GCLOUD_STORAGE_BUCKET
