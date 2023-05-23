@@ -2,8 +2,8 @@ import { extname } from 'node:path'
 import { Storage } from '@google-cloud/storage'
 import { randomUUID } from 'node:crypto'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { promisify } from 'util'
-import { PassThrough, pipeline, Readable } from 'stream'
+import { promisify } from 'node:util'
+import { PassThrough, pipeline, Readable } from 'node:stream'
 
 const pipelineAsync = promisify(pipeline)
 
@@ -14,34 +14,6 @@ const storage = new Storage({
     private_key: process.env.GCLOUD_STORAGE_PRIVATE_KEY,
   },
 })
-
-export async function uploadRoutes(app: FastifyInstance) {
-  app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
-    const parts = request.parts()
-
-    for await (const part of parts) {
-      if (part.file) {
-        const fileBuffer = await getBufferFromStream(part.file)
-
-        // Upload fileBuffer to Google Cloud Storage
-        const bucketName = process.env.GCLOUD_STORAGE_BUCKET
-
-        const fileId = randomUUID()
-        const extension = extname(part.filename)
-
-        const destination = fileId.concat(extension)
-
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(destination)
-        await file.save(fileBuffer)
-
-        const fileUrl = `https://storage.googleapis.com/${bucket.name}/${destination}`
-
-        reply.send({ success: true, fileUrl })
-      }
-    }
-  })
-}
 
 async function getBufferFromStream(stream: Readable): Promise<Buffer> {
   const passThrough = new PassThrough()
@@ -60,4 +32,32 @@ async function getBufferFromStream(stream: Readable): Promise<Buffer> {
   await pipelineAsync(stream, passThrough)
 
   return Buffer.concat(chunks)
+}
+
+export async function uploadRoutes(app: FastifyInstance) {
+  app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
+    const parts = request.parts() as any
+
+    for await (const part of parts) {
+      if (part.file) {
+        const fileBuffer = await getBufferFromStream(part.file)
+
+        // Upload fileBuffer to Google Cloud Storage
+        const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
+
+        const fileId = randomUUID()
+        const extension = extname(part.filename)
+
+        const destination = fileId.concat(extension)
+
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(destination)
+        await file.save(fileBuffer)
+
+        const fileUrl = `https://storage.googleapis.com/${bucket.name}/${destination}`
+
+        reply.send({ success: true, fileUrl })
+      }
+    }
+  })
 }
