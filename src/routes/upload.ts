@@ -1,8 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
-import { Storage } from '@google-cloud/storage'
-import { randomUUID } from 'crypto'
-import { extname } from 'path'
+import { Storage, UploadResponse } from '@google-cloud/storage'
 
 const storage = new Storage({
   projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
@@ -12,34 +10,62 @@ const storage = new Storage({
   },
 })
 
-const bucketName = 'spacetime-bucket'
+const bucketName = process.env.GCLOUD_STORAGE_BUCKET
 
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
-    const parts = request.parts()
+    try {
+      const parts = request.parts()
 
-    for await (const part of parts) {
-      if (part.file) {
-        const { filename, mimetype } = part
-        const bucketName = 'spacetime-bucket' // Replace with your bucket name
+      for await (const part of parts) {
+        if (part.file) {
+          const { filename, mimetype, file } = part
 
-        const file = storage.bucket(bucketName).file(filename)
-        const writeStream = file.createWriteStream({
-          metadata: {
-            contentType: mimetype,
-          },
-        })
+          const fileBuffer = await getBufferFromStream(file)
+          const uploadResponse = await uploadToStorage(
+            fileBuffer,
+            filename,
+            mimetype,
+          )
 
-        part.file.pipe(writeStream)
-
-        await new Promise((resolve, reject) => {
-          writeStream.on('error', reject)
-          writeStream.on('finish', resolve)
-        })
-
-        const fileUrl = `https://storage.googleapis.com/${bucketName}/${filename}`
-        reply.send({ success: true, fileUrl })
+          const fileUrl = getFileUrl('asdasdasd.jpeg')
+          reply.send({ success: true, fileUrl })
+          return
+        }
       }
+
+      reply.code(400).send({ error: 'No file uploaded' })
+    } catch (error) {
+      console.error(error)
+      reply.code(500).send({ error: 'Upload failed' })
     }
   })
+}
+async function getBufferFromStream(
+  stream: NodeJS.ReadableStream,
+): Promise<Buffer> {
+  const chunks: Buffer[] = []
+
+  for await (const chunk of stream) {
+    chunks.push(chunk)
+  }
+
+  return Buffer.concat(chunks)
+}
+
+async function uploadToStorage(
+  buffer: Buffer,
+  filename: string,
+  mimetype: string,
+): Promise<UploadResponse> {
+  const file = storage.bucket(bucketName).file(filename)
+  return file.save(buffer, {
+    metadata: {
+      contentType: mimetype,
+    },
+  })
+}
+
+function getFileUrl(filename: string): string {
+  return `https://storage.googleapis.com/${bucketName}/${filename}`
 }
