@@ -50,8 +50,8 @@ export async function uploadRoutes(app: FastifyInstance) {
 
         const destination = fileId.concat(extension)
 
-        // const bucket = storage.bucket(bucketName)
-        // const file = bucket.file(destination)
+        const bucket = storage.bucket(bucketName)
+        const file = bucket.file(destination)
         //  await file.save(fileBuffer)
       }
     }
