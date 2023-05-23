@@ -17,28 +17,28 @@ const storage = new Storage({
 
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
-    const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
+    // const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
 
-    const upload = await request.file()
+    // const upload = await request.file()
 
-    if (!upload) {
-      return reply.status(500).send()
-    }
+    // if (!upload) {
+    //   return reply.status(500).send()
+    // }
 
-    const destination = `ddddd.jpeg`
+    // const destination = `ddddd.jpeg`
 
-    const bucket = storage.bucket(bucketName)
-    const blob = bucket.file(destination)
+    // const bucket = storage.bucket(bucketName)
+    // const blob = bucket.file(destination)
 
-    await blob
-      .createWriteStream({
-        resumable: false,
-      })
-      .end('ddddd.jpeg')
+    // await blob
+    //   .createWriteStream({
+    //     resumable: false,
+    //   })
+    //   .end('ddddd.jpeg')
 
-    const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
-    reply.send({ success: true, fileUrl })
-    /* const parts = request.parts() as any
+    // const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
+    // reply.send({ success: true, fileUrl })
+    const parts = request.parts() as any
 
     for await (const part of parts) {
       if (part.file) {
@@ -66,6 +66,6 @@ export async function uploadRoutes(app: FastifyInstance) {
       }
     }
     const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
-    reply.send({ success: true, fileUrl }) */
+    reply.send({ success: true, fileUrl })
   })
 }
