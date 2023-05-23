@@ -37,7 +37,7 @@ export async function uploadRoutes(app: FastifyInstance) {
       reply.code(400).send({ error: 'No file uploaded' })
     } catch (error) {
       console.error(error)
-      reply.code(500).send({ error: 'Upload failed' })
+      reply.code(500).send({ error })
     }
   })
 }
