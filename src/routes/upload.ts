@@ -1,4 +1,4 @@
-import path, { extname } from 'node:path'
+import { extname } from 'node:path'
 import { Storage } from '@google-cloud/storage'
 import { randomUUID } from 'node:crypto'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
@@ -6,12 +6,6 @@ import { promisify } from 'util'
 import { PassThrough, pipeline, Readable } from 'stream'
 
 const pipelineAsync = promisify(pipeline)
-
-// const keyFilename = path.join(__dirname, '/routes/google-cloud-key.json')
-
-// const storage = new Storage({
-//   keyFilename,
-// })
 
 const storage = new Storage({
   projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
@@ -30,7 +24,7 @@ export async function uploadRoutes(app: FastifyInstance) {
         const fileBuffer = await getBufferFromStream(part.file)
 
         // Upload fileBuffer to Google Cloud Storage
-        const bucketName = 'spacetime-bucket'
+        const bucketName = process.env.GCLOUD_STORAGE_BUCKET
 
         const fileId = randomUUID()
         const extension = extname(part.filename)
