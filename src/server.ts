@@ -7,7 +7,6 @@ import { memoriesRoutes } from './routes/memories'
 import { authRoutes } from './routes/auth'
 import { uploadRoutes } from './routes/upload'
 import cors from '@fastify/cors'
-import fs from 'fs'
 
 const app = fastify()
 
@@ -19,12 +18,6 @@ app.register(multipart)
 
 app.register(jwt, {
   secret: 'spacetime',
-})
-
-app.register(require('@fastify/http-proxy'), {
-  upstream: 'https://console.cloud.google.com',
-  prefix: '/storage',
-  http2: false, // optional
 })
 
 app.register(uploadRoutes)
