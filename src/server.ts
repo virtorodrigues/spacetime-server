@@ -8,6 +8,13 @@ import { authRoutes } from './routes/auth'
 import { uploadRoutes } from './routes/upload'
 import cors from '@fastify/cors'
 
+// const app = fastify({
+//   http2: true,
+//   https: {
+//     key: fs.readFileSync('key.pem'),
+//     cert: fs.readFileSync('cert.pem'),
+//   },
+// })
 const app = fastify()
 
 app.register(multipart)
@@ -18,6 +25,12 @@ app.register(cors, {
 
 app.register(jwt, {
   secret: 'spacetime',
+})
+
+app.register(require('@fastify/http-proxy'), {
+  upstream: 'https://storage.googleapis.com',
+  prefix: '/api', // optional
+  http2: false, // optional
 })
 
 app.register(uploadRoutes)
