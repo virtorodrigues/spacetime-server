@@ -2,13 +2,10 @@ import { extname } from 'node:path'
 import { Storage } from '@google-cloud/storage'
 import { randomUUID } from 'node:crypto'
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { promisify } from 'node:util'
-import { PassThrough, pipeline, Readable } from 'node:stream'
 
 // const pipelineAsync = promisify(pipeline)
 
 const storage = new Storage({
-  projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
   credentials: {
     client_email: process.env.GCLOUD_STORAGE_CLIENT_EMAIL,
     private_key: process.env.GCLOUD_STORAGE_PRIVATE_KEY,
