@@ -1,30 +1,28 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
-import { Storage, UploadResponse } from '@google-cloud/storage'
-import path from 'path'
+import { Storage } from '@google-cloud/storage'
 
 const storage = new Storage({
   projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
-  keyFilename: path.join(__dirname, '/dist/google-cloud-service.json'),
+  credentials: {
+    client_email: process.env.GCLOUD_STORAGE_CLIENT_EMAIL,
+    private_key: process.env.GCLOUD_STORAGE_PRIVATE_KEY,
+  },
 })
 
-const bucketName = process.env.GCLOUD_STORAGE_BUCKET
+const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
 
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const parts = request.parts()
+      const parts: any = request.parts()
 
       for await (const part of parts) {
         if (part.file) {
           const { filename, mimetype, file } = part
 
           const fileBuffer = await getBufferFromStream(file)
-          const uploadResponse = await uploadToStorage(
-            fileBuffer,
-            filename,
-            mimetype,
-          )
+          await uploadToStorage(fileBuffer, filename, mimetype)
 
           const fileUrl = getFileUrl('asdasdasd.jpeg')
           reply.send({ success: true, fileUrl })
@@ -39,9 +37,7 @@ export async function uploadRoutes(app: FastifyInstance) {
     }
   })
 }
-async function getBufferFromStream(
-  stream: NodeJS.ReadableStream,
-): Promise<Buffer> {
+async function getBufferFromStream(stream: any): Promise<Buffer> {
   const chunks: Buffer[] = []
 
   for await (const chunk of stream) {
@@ -55,9 +51,10 @@ async function uploadToStorage(
   buffer: Buffer,
   filename: string,
   mimetype: string,
-): Promise<UploadResponse> {
+  // ): Promise<UploadResponse> {
+) {
   const file = storage.bucket(bucketName).file(filename)
-  return file.save(buffer, {
+  file.save(buffer, {
     metadata: {
       contentType: mimetype,
     },
