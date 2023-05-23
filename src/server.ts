@@ -28,6 +28,8 @@ app.register(jwt, {
   secret: 'spacetime',
 })
 
+app.register(require('fastify-https-redirect'))
+
 app.register(require('@fastify/http-proxy'), {
   upstream: 'https://storage.googleapis.com',
   prefix: '/api',
