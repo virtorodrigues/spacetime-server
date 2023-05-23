@@ -52,7 +52,7 @@ export async function uploadRoutes(app: FastifyInstance) {
 
         const bucket = storage.bucket(bucketName)
         const file = bucket.file(destination)
-        //  await file.save(fileBuffer)
+        await file.save(fileBuffer)
       }
     }
     const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
