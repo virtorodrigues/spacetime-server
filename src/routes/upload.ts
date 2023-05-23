@@ -36,7 +36,7 @@ async function getBufferFromStream(stream: Readable): Promise<Buffer> {
 
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
-    /* const parts = request.parts() as any
+    const parts = request.parts() as any
 
     for await (const part of parts) {
       if (part.file) {
@@ -50,13 +50,11 @@ export async function uploadRoutes(app: FastifyInstance) {
 
         const destination = fileId.concat(extension)
 
-        const bucket = storage.bucket(bucketName)
-        const file = bucket.file(destination)
-        await file.save(fileBuffer)
-
-        
+        // const bucket = storage.bucket(bucketName)
+        // const file = bucket.file(destination)
+        //  await file.save(fileBuffer)
       }
-    } */
+    }
     const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
     reply.send({ success: true, fileUrl })
   })
