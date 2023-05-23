@@ -7,7 +7,6 @@ import { memoriesRoutes } from './routes/memories'
 import { authRoutes } from './routes/auth'
 import { uploadRoutes } from './routes/upload'
 import cors from '@fastify/cors'
-import fs from 'fs'
 
 // const app = fastify({
 //   http2: true,
@@ -31,8 +30,8 @@ app.register(jwt, {
 app.register(require('fastify-https-redirect'))
 
 app.register(require('@fastify/http-proxy'), {
-  upstream: 'https://storage.googleapis.com',
-  prefix: '/api',
+  upstream: 'https://console.cloud.google.com',
+  prefix: '/storage',
   http2: false, // optional
 })
 
