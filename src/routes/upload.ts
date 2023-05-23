@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify'
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
 import { Storage } from '@google-cloud/storage'
 import { randomUUID } from 'crypto'
@@ -15,36 +15,31 @@ const storage = new Storage({
 const bucketName = 'spacetime-bucket'
 
 export async function uploadRoutes(app: FastifyInstance) {
-  app.post('/upload', async (request, reply) => {
-    const parts: any = request.parts()
-
-    let fileBuffer: any
-
-    let filename = ''
+  app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
+    const parts = request.parts()
 
     for await (const part of parts) {
       if (part.file) {
-        const buffers = []
+        const { filename, mimetype } = part
+        const bucketName = 'spacetime-bucket' // Replace with your bucket name
 
-        const fileId = randomUUID()
-        const extension = extname(part.filename)
+        const file = storage.bucket(bucketName).file(filename)
+        const writeStream = file.createWriteStream({
+          metadata: {
+            contentType: mimetype,
+          },
+        })
 
-        filename = fileId.concat(extension)
+        part.file.pipe(writeStream)
 
-        for await (const chunk of part.file) {
-          buffers.push(chunk)
-        }
-        fileBuffer = Buffer.concat(buffers)
+        await new Promise((resolve, reject) => {
+          writeStream.on('error', reject)
+          writeStream.on('finish', resolve)
+        })
+
+        const fileUrl = `https://storage.googleapis.com/${bucketName}/${filename}`
+        reply.send({ success: true, fileUrl })
       }
     }
-
-    const bucket = storage.bucket(bucketName)
-    const blob = bucket.file(filename)
-
-    await blob.createWriteStream().end(fileBuffer)
-
-    const fileUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`
-
-    reply.send({ success: true, fileUrl })
   })
 }
