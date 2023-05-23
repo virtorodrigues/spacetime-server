@@ -7,14 +7,15 @@ import { memoriesRoutes } from './routes/memories'
 import { authRoutes } from './routes/auth'
 import { uploadRoutes } from './routes/upload'
 import cors from '@fastify/cors'
+import fs from 'fs'
 
 const app = fastify()
-
-app.register(multipart)
 
 app.register(cors, {
   origin: true,
 })
+
+app.register(multipart)
 
 app.register(jwt, {
   secret: 'spacetime',
