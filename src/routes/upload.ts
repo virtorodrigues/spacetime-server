@@ -5,7 +5,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { promisify } from 'node:util'
 import { PassThrough, pipeline, Readable } from 'node:stream'
 
-const pipelineAsync = promisify(pipeline)
+// const pipelineAsync = promisify(pipeline)
 
 const storage = new Storage({
   projectId: process.env.GCLOUD_STORAGE_PROJECT_ID,
@@ -15,28 +15,23 @@ const storage = new Storage({
   },
 })
 
-async function getBufferFromStream(stream: Readable): Promise<Buffer> {
-  const passThrough = new PassThrough()
-  const chunks: Buffer[] = []
-
-  pipeline(stream, passThrough, (err) => {
-    if (err) {
-      throw err
-    }
-  })
-
-  passThrough.on('data', (chunk) => {
-    chunks.push(chunk)
-  })
-
-  await pipelineAsync(stream, passThrough)
-
-  return Buffer.concat(chunks)
-}
-
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
-    const parts = request.parts() as any
+    const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
+
+    const upload = await request.file()
+
+    if (!upload) {
+      return reply.status(500).send()
+    }
+
+    const destination = `ddddd.jpeg`
+
+    const bucket = storage.bucket(bucketName)
+    const blob = bucket.file(destination)
+
+    await blob.createWriteStream().end(upload.file)
+    /* const parts = request.parts() as any
 
     for await (const part of parts) {
       if (part.file) {
@@ -64,6 +59,6 @@ export async function uploadRoutes(app: FastifyInstance) {
       }
     }
     const fileUrl = `https://storage.googleapis.com/spacetime-bucket/5dd8e299-59be-4078-a5f8-f1a479153111.jpeg`
-    reply.send({ success: true, fileUrl })
+    reply.send({ success: true, fileUrl }) */
   })
 }
