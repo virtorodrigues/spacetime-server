@@ -31,8 +31,8 @@ app.register(jwt, {
 app.register(require('fastify-https-redirect'))
 
 app.register(require('@fastify/http-proxy'), {
-  upstream: 'https://console.cloud.google.com/storage/browser',
-  prefix: '/spacetime-bucket',
+  upstream: 'https://storage.googleapis.com',
+  prefix: '/api',
   http2: false, // optional
 })
 
@@ -42,7 +42,7 @@ app.register(memoriesRoutes)
 
 app
   .listen({
-    host: '0.0.0.0',
+    host: process.env.HOST ? String(process.env.HOST) : '0.0.0.0',
     port: process.env.PORT ? Number(process.env.PORT) : 3333,
   })
   .then(() => {
