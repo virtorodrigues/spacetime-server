@@ -33,9 +33,13 @@ export async function uploadRoutes(app: FastifyInstance) {
 
     // Assuming a single file is uploaded
 
+    const fileId = randomUUID()
+    const extension = extname(file.filename)
+    const destination = fileId.concat(extension)
+
     const params = {
       Bucket: 'spacetime-bucket', // Replace with your S3 bucket name
-      Key: file.filename,
+      Key: destination,
       Body: file.file,
       ContentType: file.mimetype,
     }
@@ -43,7 +47,9 @@ export async function uploadRoutes(app: FastifyInstance) {
     // Upload the file to S3
     await s3.upload(params).promise()
 
-    reply.send({ message: 'File uploaded successfully' })
+    const fileUrl = `https://spacetime-bucket.s3.amazonaws.com/${destination}`
+
+    reply.status(200).send({ success: true, fileUrl })
     /* console.log(request.protocol)
     const bucketName = process.env.GCLOUD_STORAGE_BUCKET as string
 
