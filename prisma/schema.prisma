@@ -24,7 +24,6 @@ model Memory {
   id        String   @id @default(uuid())
   coverUrl  String
   content   String
-  isPublic  Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user   User   @relation(fields: [userId], references: [id])

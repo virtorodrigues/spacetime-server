@@ -27,6 +27,8 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.338.0",
+    "@aws-sdk/credential-provider-node": "^3.338.0",
     "@fastify/cors": "^8.2.1",
     "@fastify/http-proxy": "^9.1.0",
     "@fastify/jwt": "^6.7.1",

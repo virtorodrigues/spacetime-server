@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { prisma } from '../lib/prisma'
 import z from 'zod'
+import { deleteImageFromAWS } from './upload'
 
 export async function memoriesRoutes(app: FastifyInstance) {
   app.addHook('preHandler', async (request) => {
@@ -39,7 +40,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
       },
     })
 
-    if (!memory.isPublic && memory.userId !== request.user.sub) {
+    if (memory.userId !== request.user.sub) {
       return reply.status(401).send()
     }
 
@@ -49,17 +50,15 @@ export async function memoriesRoutes(app: FastifyInstance) {
   app.post('/memories', async (request) => {
     const bodySchema = z.object({
       content: z.string(),
-      isPublic: z.coerce.boolean().default(false),
       coverUrl: z.string(),
     })
 
-    const { content, coverUrl, isPublic } = bodySchema.parse(request.body)
+    const { content, coverUrl } = bodySchema.parse(request.body)
 
     const memory = await prisma.memory.create({
       data: {
         content,
         coverUrl,
-        isPublic,
         userId: request.user.sub,
       },
     })
@@ -68,18 +67,33 @@ export async function memoriesRoutes(app: FastifyInstance) {
   })
 
   app.put('/memories/:id', async (request, reply) => {
+    console.log('entrou editarrrrrrrrrrrrrrrrr')
     const paramsSchema = z.object({
       id: z.string().uuid(),
     })
 
     const { id } = paramsSchema.parse(request.params)
+    console.log(id)
+
     const bodySchema = z.object({
       content: z.string(),
-      isPublic: z.coerce.boolean().default(false),
+      oldCoverUrl: z.string(),
       coverUrl: z.string(),
     })
 
-    const { content, coverUrl, isPublic } = bodySchema.parse(request.body)
+    const { content, coverUrl, oldCoverUrl } = bodySchema.parse(request.body)
+
+    // delete the pic only when the new pic is different from old one
+    if (oldCoverUrl !== coverUrl) {
+      const imageName = oldCoverUrl.split(
+        'https://spacetime-bucket.s3.amazonaws.com/',
+      )[1]
+
+      const responseImageDelete = await deleteImageFromAWS(imageName)
+      if (!responseImageDelete || !responseImageDelete.success) {
+        return reply.status(403).send(responseImageDelete.message)
+      }
+    }
 
     let memory = await prisma.memory.findUniqueOrThrow({
       where: {
@@ -98,7 +112,6 @@ export async function memoriesRoutes(app: FastifyInstance) {
       data: {
         content,
         coverUrl,
-        isPublic,
       },
     })
 
@@ -120,6 +133,15 @@ export async function memoriesRoutes(app: FastifyInstance) {
 
     if (memory.userId !== request.user.sub) {
       return reply.status(401).send()
+    }
+
+    const imageName = memory.coverUrl.split(
+      'https://spacetime-bucket.s3.amazonaws.com/',
+    )[1]
+
+    const responseImageDelete = await deleteImageFromAWS(imageName)
+    if (!responseImageDelete || !responseImageDelete.success) {
+      return reply.status(403).send(responseImageDelete.message)
     }
 
     await prisma.memory.delete({
