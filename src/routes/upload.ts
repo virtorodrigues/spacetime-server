@@ -10,10 +10,10 @@ import {
 export async function uploadRoutes(app: FastifyInstance) {
   app.post('/upload', async (request: FastifyRequest, reply: FastifyReply) => {
     const s3Client = new S3Client({
-      region: 'us-east-1',
+      region: process.env.AWS_REGION,
       credentials: {
-        accessKeyId: 'AKIA36UV7CJSHDUMQZ6O',
-        secretAccessKey: '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',
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
       },
     })
     const file = await request.file({
@@ -54,10 +54,10 @@ export async function uploadRoutes(app: FastifyInstance) {
 export async function deleteImageFromAWS(imageName: string) {
   try {
     const s3Client = new S3Client({
-      region: 'us-east-1',
+      region: process.env.AWS_REGION,
       credentials: {
-        accessKeyId: 'AKIA36UV7CJSHDUMQZ6O',
-        secretAccessKey: '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',
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
       },
     })
     // Specify the S3 bucket name and the key of the image you want to delete
