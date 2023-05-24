@@ -10,9 +10,9 @@ const { S3 } = AWS
 // acho q é a privada Niyaz/rzGyrSwvO7xx0ZeKE1z54K72gHh0fQCz5y
 
 const s3 = new S3({
-  accessKeyId: 'AKIA36UV7CJSHDUMQZ6O',
-  secretAccessKey: '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',
-  region: 'us-east-1',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_region,
 })
 // const pipelineAsync = promisify(pipeline)
 
