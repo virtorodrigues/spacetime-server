@@ -130,7 +130,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
         id,
       },
     })
-    /*
+
     if (memory.userId !== request.user.sub) {
       return reply.status(401).send()
     }
@@ -142,7 +142,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
     const responseImageDelete = await deleteImageFromAWS(imageName)
     if (!responseImageDelete || !responseImageDelete.success) {
       return reply.status(403).send(responseImageDelete.message)
-    } */
+    }
 
     await prisma.memory.delete({
       where: {
