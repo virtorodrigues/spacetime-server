@@ -85,9 +85,8 @@ export async function memoriesRoutes(app: FastifyInstance) {
 
     // delete the pic only when the new pic is different from old one
     if (oldCoverUrl !== coverUrl) {
-      const imageName = oldCoverUrl.split(
-        'https://spacetime-bucket.s3.amazonaws.com/',
-      )[1]
+      const urlAccessBucket = process.env.AWS_URL_ACCESS_BUCKET as string
+      const imageName = oldCoverUrl.split(urlAccessBucket)[1]
 
       const responseImageDelete = await deleteImageFromAWS(imageName)
       if (!responseImageDelete || !responseImageDelete.success) {
@@ -135,9 +134,8 @@ export async function memoriesRoutes(app: FastifyInstance) {
       return reply.status(401).send()
     }
 
-    const imageName = memory.coverUrl.split(
-      'https://spacetime-bucket.s3.amazonaws.com/',
-    )[1]
+    const urlAccessBucket = process.env.AWS_URL_ACCESS_BUCKET as string
+    const imageName = memory.coverUrl.split(urlAccessBucket)[1]
 
     const responseImageDelete = await deleteImageFromAWS(imageName)
     if (!responseImageDelete || !responseImageDelete.success) {
