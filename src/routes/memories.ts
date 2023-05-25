@@ -67,13 +67,11 @@ export async function memoriesRoutes(app: FastifyInstance) {
   })
 
   app.put('/memories/:id', async (request, reply) => {
-    console.log('entrou editarrrrrrrrrrrrrrrrr')
     const paramsSchema = z.object({
       id: z.string().uuid(),
     })
 
     const { id } = paramsSchema.parse(request.params)
-    console.log(id)
 
     const bodySchema = z.object({
       content: z.string(),
